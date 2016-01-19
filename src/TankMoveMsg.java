@@ -11,12 +11,17 @@ import java.net.SocketException;
 public class TankMoveMsg implements Msg {
 	int msgType = Msg.TANK_MOVE_MSG;
 	int id;
+	int x;
+	int y;
 	Dir dir;
 	TankClient tc;
-	public TankMoveMsg(int id, Dir dir) {
+	public TankMoveMsg(int id, int x, int y, Dir dir) {
 		super();
 		this.id = id;
 		this.dir = dir;
+		this.x = x;
+		this.y = y;
+				
 	}
 	public TankMoveMsg(TankClient tc) {
 		this.tc = tc;
@@ -29,6 +34,8 @@ public class TankMoveMsg implements Msg {
 		try {
 			dos.writeInt(msgType);
 			dos.writeInt(id);
+			dos.writeInt(x);
+			dos.writeInt(y);
 			dos.writeInt(dir.ordinal());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -50,7 +57,8 @@ public class TankMoveMsg implements Msg {
 		try {
 			int id = dis.readInt();
 			if(tc.myTank.id == id) return;
-
+			int x = dis.readInt();
+			int y = dis.readInt();
 			Dir dir = Dir.values()[dis.readInt()];
 			//boolean good = dis.readBoolean();
 //System.out.println("id:" + id + "-x:" + x + "-y:" + y + "-dir:" + dir + "-good:" + good);
@@ -58,6 +66,8 @@ public class TankMoveMsg implements Msg {
 			for(int i = 0; i < tc.tanks.size(); i++) {
 				Tank t = tc.tanks.get(i);
 				if(t.id == id) {
+					t.x = x;
+					t.y = y;
 					t.dir = dir;
 					exist = true;
 					break;
