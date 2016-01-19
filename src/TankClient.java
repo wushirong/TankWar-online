@@ -7,13 +7,14 @@ import java.awt.event.*;
 
 
 
+
 public class TankClient extends Frame {
 	public static final int GAME_WIDTH = 800;
 	public static final int GAME_HEIGHT = 600;
 	
-	List<Missile> missile = new ArrayList<Missile>();
+	List<Missile> missiles = new ArrayList<Missile>();
 	
-	Tank myTank = new Tank(50, 50, true, Dir.D, this);
+	Tank myTank = new Tank(50, 50, true, Dir.STOP, this);
 	List<Tank> enemy = new ArrayList<Tank>();
 	//Tank enemy = new Tank(200, 200, false, this);
 	
@@ -21,18 +22,21 @@ public class TankClient extends Frame {
 	List<Explode> explodes = new ArrayList<Explode>();
 	Image offScreenImage = null;
 	NetClient nc = new NetClient(this);
-	
+	List<Tank> tanks = new ArrayList<Tank>();
 	public void paint(Graphics g) {
-		g.drawString("missile count:" + missile.size(), 40, 40);
+		g.drawString("missile count:" + missiles.size(), 40, 40);
 		for(int i = 0; i < enemy.size(); i++) {
 			Tank t = enemy.get(i);
 			t.draw(g);
 		}
-		for(int i =0; i < missile.size(); i++) {
-			Missile m = missile.get(i);
+		for(int i =0; i < missiles.size(); i++) {
+			Missile m = missiles.get(i);
 			m.hitTanks(enemy);
 			m.hitTank(myTank);
 			m.draw(g);
+		}
+		for(int i = 0; i < tanks.size(); i++) {
+			tanks.get(i).draw(g);
 		}
 		myTank.draw(g);
 
@@ -98,11 +102,11 @@ public class TankClient extends Frame {
 	private class KeyMonitor extends KeyAdapter {
 
 		public void keyPressed(KeyEvent e) {
-			myTank.KeyPressed(e);
+			myTank.keyPressed(e);
 		}
 		
 		public void keyReleased(KeyEvent e) {
-			myTank.KeyReleased(e);
+			myTank.keyReleased(e);
 		}
 	}
 }

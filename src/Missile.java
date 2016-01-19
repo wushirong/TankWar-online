@@ -1,114 +1,114 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.List;
 
-
 public class Missile {
-
-	int x, y;
-	public static final int radius = 10;
 	public static final int XSPEED = 10;
 	public static final int YSPEED = 10;
 	
+	public static final int WIDTH = 10;
+	public static final int HEIGHT = 10;
+	
+	int x, y;
 	Dir dir;
 	
-	private TankClient tc;
-	private boolean live = true;
 	private boolean good;
+	private boolean live = true;
 	
-
-	public Missile(int x, int y, Dir dir, boolean good) {
+	private TankClient tc;
+	
+	public Missile(int x, int y, Dir dir) {
 		this.x = x;
 		this.y = y;
 		this.dir = dir;
-		this.good = good;
 	}
 	
-	public Missile(int x, int y, Dir dir, boolean good, TankClient tc) {
-		this(x, y, dir, good);
+	public Missile(int x, int y, boolean good, Dir dir, TankClient tc) {
+		this(x, y, dir);
+		this.good = good;
 		this.tc = tc;
 	}
 	
 	public void draw(Graphics g) {
 		if(!live) {
-			tc.missile.remove(this);
+			tc.missiles.remove(this);
 			return;
 		}
 		
 		Color c = g.getColor();
-		g.setColor(Color.black);
-		g.fillOval(x - radius/2, y - radius/2, radius, radius);
+		g.setColor(Color.BLACK);
+		g.fillOval(x, y, WIDTH, HEIGHT);
 		g.setColor(c);
-		move();
 		
-	} 
-	
+		move();
+	}
+
 	private void move() {
+		
+		
 		switch(dir) {
-		 case L:
-			 x -= XSPEED;
-			 break;
-		 case R:
-			 x += XSPEED;
-			 break;
-		 case U:
-			 y -= YSPEED;
-			 break;
-		 case D:
-			 y += YSPEED;
-			 break;
-		 case UL:
-			 y -= YSPEED;
-			 x -= XSPEED;
-			 break;
-		 case UR:
-			 y -= YSPEED;
-			 x += XSPEED;
-			 break;
-		 case DL:
-			 y += YSPEED;
-			 x -= XSPEED;
-			 break;
-		 case DR:
-			 y += YSPEED;
-			 x += XSPEED;
-			 break;
-		 case STOP:
-			 break;
-		 }
+		case L:
+			x -= XSPEED;
+			break;
+		case UL:
+			x -= XSPEED;
+			y -= YSPEED;
+			break;
+		case U:
+			y -= YSPEED;
+			break;
+		case UR:
+			x += XSPEED;
+			y -= YSPEED;
+			break;
+		case R:
+			x += XSPEED;
+			break;
+		case DR:
+			x += XSPEED;
+			y += YSPEED;
+			break;
+		case D:
+			y += YSPEED;
+			break;
+		case DL:
+			x -= XSPEED;
+			y += YSPEED;
+			break;
+		case STOP:
+			break;
+		}
+		
 		if(x < 0 || y < 0 || x > TankClient.GAME_WIDTH || y > TankClient.GAME_HEIGHT) {
 			live = false;
-			tc.missile.remove(this);
-		}
+		}		
+	}
+
+	public boolean isLive() {
+		return live;
 	}
 	
 	public Rectangle getRect() {
-		return new Rectangle(x, y, radius, radius);
+		return new Rectangle(x, y, WIDTH, HEIGHT);
 	}
 	
 	public boolean hitTank(Tank t) {
 		if(this.live && this.getRect().intersects(t.getRect()) && t.isLive() && this.good != t.isGood()) {
 			t.setLive(false);
-			this.live = false;   
+			this.live = false;
 			Explode e = new Explode(x, y, tc);
 			tc.explodes.add(e);
-			
 			return true;
-		}
-		
-		return false; 
-	}
-	
-	public boolean hitTanks(List<Tank> tank) {
-		for(int i = 0; i < tank.size(); i++){
-			if(hitTank(tank.get(i))) return true;
 		}
 		return false;
 	}
 	
-	public boolean isLive() {
-		return live;
+	public boolean hitTanks(List<Tank> tanks) {
+		for(int i=0; i<tanks.size(); i++) {
+			if(hitTank(tanks.get(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
+	
 }
-  

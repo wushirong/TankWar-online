@@ -53,7 +53,7 @@ public class NetClient {
 		new Thread(new UDPReceiveThread()).start();
 	}
 	
-	public void send(TankNewMessage msg) {
+	public void send(Msg msg) {
 		msg.send(ds, "127.0.0.1", TankServer.UDP_PORT);
 		
 	}
@@ -77,8 +77,25 @@ public class NetClient {
 		private void parse(DatagramPacket dp) {
 			ByteArrayInputStream bais = new ByteArrayInputStream(buf, 0, dp.getLength());
 			DataInputStream dis = new DataInputStream(bais);
-			TankNewMessage tnm = new TankNewMessage();
-			tnm.parse(dis);
+			int msgType = 0;
+			
+			try {
+				msgType = dis.readInt();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			Msg msg = null;
+			switch(msgType) {
+			case Msg.TANK_MOVE_MSG:
+				msg = new TankMoveMsg(NetClient.this.tc);
+				msg.parse(dis);
+				break;
+			case Msg.TANK_NEW_MSG:
+				msg = new TankNewMessage(NetClient.this.tc);
+				msg.parse(dis);
+				break;
+			}
+			
 		}
 		
 	}

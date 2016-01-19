@@ -8,29 +8,28 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 
-public class TankNewMessage implements Msg{
-	int msgType = Msg.TANK_NEW_MSG;
-	Tank tank;
+public class TankMoveMsg implements Msg {
+	int msgType = Msg.TANK_MOVE_MSG;
+	int id;
+	Dir dir;
 	TankClient tc;
-	public TankNewMessage(Tank tank) {
-		this.tank = tank;
+	public TankMoveMsg(int id, Dir dir) {
+		super();
+		this.id = id;
+		this.dir = dir;
+	}
+	public TankMoveMsg(TankClient tc) {
+		this.tc = tc;
 		
 	}
-	public TankNewMessage(TankClient tc) {
-		this.tc = tc;
-	}
-	
-	
+	@Override
 	public void send(DatagramSocket ds, String IP, int udpPort) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(baos);
 		try {
 			dos.writeInt(msgType);
-			dos.writeInt(tank.id);
-			dos.writeInt(tank.x);
-			dos.writeInt(tank.y);
-			dos.writeInt(tank.dir.ordinal());
-			dos.writeBoolean(tank.isGood());
+			dos.writeInt(id);
+			dos.writeInt(dir.ordinal());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -46,23 +45,28 @@ public class TankNewMessage implements Msg{
 			e.printStackTrace();
 		}
 	}
-
+	@Override
 	public void parse(DataInputStream dis) {
 		try {
 			int id = dis.readInt();
 			if(tc.myTank.id == id) return;
-			int x = dis.readInt();
-			int y = dis.readInt();
+
 			Dir dir = Dir.values()[dis.readInt()];
 			boolean good = dis.readBoolean();
 //System.out.println("id:" + id + "-x:" + x + "-y:" + y + "-dir:" + dir + "-good:" + good);
-			Tank t = new Tank(x, y, good, dir, tc);			
-			t.id = id;
-			tc.tanks.add(t);
+			boolean exist = false;
+			for(int i = 0; i < tc.tanks.size(); i++) {
+				Tank t = tc.tanks.get(i);
+				if(t.id == id) {
+					t.dir = dir;
+					exist = true;
+					break;
+				}
+			}
+			//需继续处理加新坦克的问题
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 }
