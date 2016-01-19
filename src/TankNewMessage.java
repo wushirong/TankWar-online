@@ -51,14 +51,28 @@ public class TankNewMessage implements Msg{
 		try {
 			int id = dis.readInt();
 			if(tc.myTank.id == id) return;
+			
 			int x = dis.readInt();
 			int y = dis.readInt();
 			Dir dir = Dir.values()[dis.readInt()];
 			boolean good = dis.readBoolean();
 //System.out.println("id:" + id + "-x:" + x + "-y:" + y + "-dir:" + dir + "-good:" + good);
-			Tank t = new Tank(x, y, good, dir, tc);			
-			t.id = id;
-			tc.tanks.add(t);
+			boolean exist = false;
+			for(int i = 0; i < tc.tanks.size(); i++) {
+				Tank t = tc.tanks.get(i);
+				if(t.id == id) {
+					exist = true;
+					break;
+				}
+			}
+			if(!exist) {
+				TankNewMessage tnMsg = new TankNewMessage(tc.myTank);
+				tc.nc.send(tnMsg);
+				Tank t = new Tank(x, y, good, dir, tc);			
+				t.id = id;
+				tc.tanks.add(t);
+			}
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

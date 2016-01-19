@@ -10,7 +10,7 @@ import java.net.SocketException;
 
 
 public class NetClient {
-	public static int UDP_PORT_START = 2333;
+	public static int UDP_PORT_START = 2344;
 	public int udpPort;
 	TankClient tc;
 	DatagramSocket ds = null;
@@ -87,6 +87,7 @@ public class NetClient {
 			Msg msg = null;
 			switch(msgType) {
 			case Msg.TANK_MOVE_MSG:
+				
 				msg = new TankMoveMsg(NetClient.this.tc);
 				msg.parse(dis);
 				break;

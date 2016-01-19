@@ -52,7 +52,7 @@ public class TankMoveMsg implements Msg {
 			if(tc.myTank.id == id) return;
 
 			Dir dir = Dir.values()[dis.readInt()];
-			boolean good = dis.readBoolean();
+			//boolean good = dis.readBoolean();
 //System.out.println("id:" + id + "-x:" + x + "-y:" + y + "-dir:" + dir + "-good:" + good);
 			boolean exist = false;
 			for(int i = 0; i < tc.tanks.size(); i++) {
