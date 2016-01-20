@@ -7,12 +7,14 @@ public class Missile {
 	
 	public static final int WIDTH = 10;
 	public static final int HEIGHT = 10;
+	public static int ID = 0;
 	
 	int x, y;
 	Dir dir;
+	int id;
 	
 	public boolean good;
-	private boolean live = true;
+	public boolean live = true;
 	
 	TankClient tc;
 	int tankId;
@@ -23,6 +25,7 @@ public class Missile {
 		this.y = y;
 		this.good = good;
 		this.dir = dir;
+		this.id = ID++;
 	}
 	
 	public Missile(int tankId, int x, int y, boolean good, Dir dir, TankClient tc) {
