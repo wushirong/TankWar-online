@@ -10,23 +10,32 @@ import java.net.SocketException;
 
 
 public class NetClient {
-	public static int UDP_PORT_START = 2344;
-	public int udpPort;
+	private int udpPort;
+	public int getUdpPort() {
+		return udpPort;
+	}
+
+
+	public void setUdpPort(int udpPort) {
+		this.udpPort = udpPort;
+	}
+
 	TankClient tc;
 	DatagramSocket ds = null;
 	
 	public NetClient(TankClient tc) {
-		udpPort = UDP_PORT_START++;
 		this.tc = tc;
+			
+	}
+	
+
+	public void connect(String IP, int port) {
 		try {
 			ds = new DatagramSocket(udpPort);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
-	}
-	
-	public void connect(String IP, int port) {
+		}
 		Socket s = null;
 		try {
 			s = new Socket(IP, port);
