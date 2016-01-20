@@ -129,8 +129,8 @@ public class Tank {
 		if(y < 30) y = 30;
 		if(x + Tank.WIDTH > TankClient.GAME_WIDTH) x = TankClient.GAME_WIDTH - Tank.WIDTH;
 		if(y + Tank.HEIGHT > TankClient.GAME_HEIGHT) y = TankClient.GAME_HEIGHT - Tank.HEIGHT;
-		
-		if(!good) {
+//this is for player-computer vrsion's enemy tank
+/*		if(!good) {
 			Dir[] dirs = Dir.values();
 			if(step == 0) {
 				step = r.nextInt(12) + 3;
@@ -140,7 +140,7 @@ public class Tank {
 			step --;
 			
 			if(r.nextInt(40) > 38) this.fire();
-		}
+		}*/
 	}
 	
 	public void keyPressed(KeyEvent e) {
@@ -206,8 +206,12 @@ public class Tank {
 		if(!live) return null;
 		int x = this.x + Tank.WIDTH/2 - Missile.WIDTH/2;
 		int y = this.y + Tank.HEIGHT/2 - Missile.HEIGHT/2;
-		Missile m = new Missile(x, y, good, ptDir, this.tc);
+		Missile m = new Missile(id, x, y, good, ptDir, this.tc);
 		tc.missiles.add(m);
+		
+		MissileNewMsg msg = new MissileNewMsg(m);
+		tc.nc.send(msg);
+		
 		return m;
 	}
 	
